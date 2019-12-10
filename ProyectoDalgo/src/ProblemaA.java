@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 public class ProblemaA {
 	
 	
-	static String longestRepeatedSubstring(String str, int n) { 
+	static int longestRepeatedSubstring(String str, int n) { 
 		
         int LCSRe[][] = new int[n + 1][n + 1]; 
   
@@ -44,40 +44,41 @@ public class ProblemaA {
             } 
         } 
   
-        return res; 
+        return res_length; 
     } 
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String size, datos[];
+		String size;
 		size = br.readLine();
 		int rta = 0;
-		String info="";
-		while(!size.equals("0"))
-		{
-			info = br.readLine();
-			datos=info.split(" ");
-			rta=0;
-			int i = 0;
-			int j = datos.length/2;
-			int divider = datos.length/2;
-			for (j=divider, i=0; divider!=0; i++,j++) {
-				if(j==datos.length-1)
-				{
-					divider=divider/2;
-					i=0;
-				}
-				if(datos[i].equals(datos[j]))
-				{
-					rta++;
-				}
-				rta++;
-			}
-			System.out.println(rta);
-			size = br.readLine();
-			
-		}
-		longestRepeatedSubstring(info, Integer.parseInt(size));
+		String info=br.readLine();
+//		while(!size.equals("0"))
+//		{
+//			info = br.readLine();
+//			datos=info.split(" ");
+//			rta=0;
+//			int i = 0;
+//			int j = datos.length/2;
+//			int divider = datos.length/2;
+//			for (j=divider, i=0; divider!=0; i++,j++) {
+//				if(j==datos.length-1)
+//				{
+//					divider=divider/2;
+//					i=0;
+//				}
+//				if(datos[i].equals(datos[j]))
+//				{
+//					rta++;
+//				}
+//				rta++;
+//			}
+//			System.out.println(rta);
+//			size = br.readLine();
+//			
+//		}
+		rta= longestRepeatedSubstring(info, Integer.parseInt(size));
+		System.out.println(rta);
 		
 	}
 
