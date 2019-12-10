@@ -122,7 +122,7 @@ public class ProblemaB {
 			if(resp<=1)
 			{
 				resp=0;
-				cadena="";
+				cadena="*";
 			}
 
 			System.out.println(resp);
