@@ -4,32 +4,26 @@ import java.io.InputStreamReader;
 
 public class ProblemaC {
 	
-
-    // Define Infinite (Using INT_MAX  
-    // caused overflow problems) 
     static int INF = 10000; 
   
-    static class Point  
-    { 
-        int x; 
-        int y; 
   
-        public Point(int x, int y) 
-        { 
-            this.x = x; 
-            this.y = y; 
-        } 
-    }; 
-  
-    // Given three colinear points p, q, r,  
-    // the function checks if point q lies 
-    // on line segment 'pr' 
-    static boolean onSegment(Point p, Point q, Point r)  
+
+    /**
+     * La funcion revisa si el punto q esta en el segmento que comienza en p y termina en r
+     * @param px coordenada x de p
+     * @param py coordenada y de p
+     * @param qx coordenada x de q
+     * @param qy coordenada y de q
+     * @param rx coordenada x de r
+     * @param ry coordenada y de r
+     * @return
+     */
+    static boolean estaEnLinea(int px, int py, int qx, int qy, int rx, int ry)  
     { 
-        if (q.x <= Math.max(p.x, r.x) && 
-            q.x >= Math.min(p.x, r.x) && 
-            q.y <= Math.max(p.y, r.y) && 
-            q.y >= Math.min(p.y, r.y)) 
+        if (qx <= Math.max(px, rx) && 
+            qx >= Math.min(px, rx) && 
+            qy <= Math.max(py, ry) && 
+            qy >= Math.min(py, ry)) 
         { 
             return true; 
         } 
@@ -41,10 +35,20 @@ public class ProblemaC {
     // 0 --> p, q and r are colinear 
     // 1 --> Clockwise 
     // 2 --> Counterclockwise 
-    static int orientation(Point p, Point q, Point r)  
+    /**
+     * Haya la orientacion de tres puntos conectados por dos segmentos
+     * @param px
+     * @param py
+     * @param qx
+     * @param qy
+     * @param rx
+     * @param ry
+     * @return 0 si son colineares, 1 para sentido horario, dos para sentido antihorario.
+     */
+    static int orientacion(int px, int py, int qx, int qy, int rx, int ry)  
     { 
-        int val = (q.y - p.y) * (r.x - q.x) 
-                - (q.x - p.x) * (r.y - q.y); 
+        int val = (qy - py) * (rx - qx) 
+                - (qx - px) * (ry - qy);  
   
         if (val == 0)  
         { 
@@ -55,15 +59,14 @@ public class ProblemaC {
   
     // The function that returns true if  
     // line segment 'p1q1' and 'p2q2' intersect. 
-    static boolean doIntersect(Point p1, Point q1,  
-                               Point p2, Point q2)  
+    static boolean seInterseca(int p1x, int p1y, int q1x, int q1y, int p2x, int p2y, int q2x, int q2y)  
     { 
         // Find the four orientations needed for  
         // general and special cases 
-        int o1 = orientation(p1, q1, p2); 
-        int o2 = orientation(p1, q1, q2); 
-        int o3 = orientation(p2, q2, p1); 
-        int o4 = orientation(p2, q2, q1); 
+        int o1 = orientacion(p1x, p1y, q1x, q1y, p2x, p2y); 
+        int o2 = orientacion(p1x, p1y, q1x, q1y, q2x, q2y); 
+        int o3 = orientacion(p2x, p2y, q2x, q2y, p1x, p1y); 
+        int o4 = orientacion(p2x, p2y, q2x, q2y, q1x, q1y); 
   
         // General case 
         if (o1 != o2 && o3 != o4) 
@@ -74,28 +77,28 @@ public class ProblemaC {
         // Special Cases 
         // p1, q1 and p2 are colinear and 
         // p2 lies on segment p1q1 
-        if (o1 == 0 && onSegment(p1, p2, q1))  
+        if (o1 == 0 && estaEnLinea(p1x, p1y, p2x, p2y, q1x, q1y))  
         { 
             return true; 
         } 
   
         // p1, q1 and p2 are colinear and 
         // q2 lies on segment p1q1 
-        if (o2 == 0 && onSegment(p1, q2, q1))  
+        if (o2 == 0 && estaEnLinea(p1x, p1y, q2x, q2y, q1x, q1y))  
         { 
             return true; 
         } 
   
         // p2, q2 and p1 are colinear and 
         // p1 lies on segment p2q2 
-        if (o3 == 0 && onSegment(p2, p1, q2)) 
+        if (o3 == 0 && estaEnLinea(p2x, p2y, p1x, p1y, q2x, q2y)) 
         { 
             return true; 
         } 
   
         // p2, q2 and q1 are colinear and 
         // q1 lies on segment p2q2 
-        if (o4 == 0 && onSegment(p2, q1, q2)) 
+        if (o4 == 0 && estaEnLinea(p2x, p2y, q1x, q1y, q2x, q2y)) 
         { 
             return true; 
         } 
@@ -106,16 +109,16 @@ public class ProblemaC {
   
     // Returns true if the point p lies  
     // inside the polygon[] with n vertices 
-    static boolean isInside(Point polygon[], int n, Point p) 
+    static int estaAdentro(Integer coordsx[], Integer coordsy[], int n, int px, int py) 
     { 
         // There must be at least 3 vertices in polygon[] 
         if (n < 3)  
         { 
-            return false; 
+            return -1; 
         } 
   
         // Create a point for line segment from p to infinite 
-        Point extreme = new Point(INF, p.y); 
+        //Point extreme = new Point(INF, p.y); 
   
         // Count intersections of the above line  
         // with sides of polygon 
@@ -127,15 +130,22 @@ public class ProblemaC {
             // Check if the line segment from 'p' to  
             // 'extreme' intersects with the line  
             // segment from 'polygon[i]' to 'polygon[next]' 
-            if (doIntersect(polygon[i], polygon[next], p, extreme))  
+            if (seInterseca(coordsx[i],coordsy[i], coordsx[next],coordsy[next], px, py, INF, py))  
             { 
                 // If the point 'p' is colinear with line  
                 // segment 'i-next', then check if it lies  
                 // on segment. If it lies, return true, otherwise false 
-                if (orientation(polygon[i], p, polygon[next]) == 0) 
+                if (orientacion(coordsx[i],coordsy[i], px, py, coordsx[next],coordsy[next]) == 0) 
                 { 
-                    return onSegment(polygon[i], p, 
-                                     polygon[next]); 
+                    boolean aux =estaEnLinea(coordsx[i],coordsy[i], px, py, coordsx[next],coordsy[next]); 
+                    if(aux)
+                    {
+                    	return 0;
+                    }
+                    else
+                    {
+                    	return -1;
+                    }
                 } 
   
                 count++; 
@@ -144,7 +154,16 @@ public class ProblemaC {
         } while (i != 0); 
   
         // Return true if count is odd, false otherwise 
-        return (count % 2 == 1); // Same as (count%2 == 1) 
+        boolean rta = count % 2 == 1; // Same as (count%2 == 1) 
+        if(rta)
+        {
+        	return 1;
+        }
+        else
+        {
+        	return -1;
+        }
+
     } 
 	
 	public static void main(String[] args) throws IOException{
@@ -154,14 +173,15 @@ public class ProblemaC {
 		while(!constrains.equals("0 0 0 0"))
 		{
 			String[] list = constrains.split(" ");
-			Integer[] xcoords;
-			Integer[] ycoords;
-			datos= new String[Integer.parseInt(constrains)];
-			for (int i = 0; i < Integer.parseInt(constrains); i++) {
-				datos[i] = br.readLine();
-			}
-			
-						
+			Integer[] xcoords = new Integer[Integer.parseInt(list[1])];
+			Integer[] ycoords = new Integer[Integer.parseInt(list[1])];
+			datos = br.readLine().split(" ");
+			for (int i = 0, j=0; i < Integer.parseInt(list[1])*2; i=i+2, j++) {
+				xcoords[j] = Integer.parseInt(datos[i]);
+				ycoords[j] = Integer.parseInt(datos[i+1]);
+				}
+			int rta = estaAdentro(xcoords, ycoords, xcoords.length, Integer.parseInt(list[2]), Integer.parseInt(list[3]));
+			System.out.println(rta);
 			constrains = br.readLine();
 		}		
 		
