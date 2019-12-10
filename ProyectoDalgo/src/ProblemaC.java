@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 
 public class ProblemaC {
 	
-    static int INF = 10000; 
+    static int MAXX = 10000; 
   
   
 
@@ -30,11 +30,7 @@ public class ProblemaC {
         return false; 
     } 
   
-    // To find orientation of ordered triplet (p, q, r). 
-    // The function returns following values 
-    // 0 --> p, q and r are colinear 
-    // 1 --> Clockwise 
-    // 2 --> Counterclockwise 
+     
     /**
      * Haya la orientacion de tres puntos conectados por dos segmentos
      * @param px
@@ -54,87 +50,98 @@ public class ProblemaC {
         { 
             return 0; // colinear 
         } 
-        return (val > 0) ? 1 : 2; // clock or counterclock wise 
+        // sentido antohorario o sentido horario
+        return (val > 0) ? 1 : 2;  
     } 
   
-    // The function that returns true if  
-    // line segment 'p1q1' and 'p2q2' intersect. 
+
+    /**
+     * Verifica que los segmentos p1q1 y p2q2 se intersequen
+     * @param p1x
+     * @param p1y
+     * @param q1x
+     * @param q1y
+     * @param p2x
+     * @param p2y
+     * @param q2x
+     * @param q2y
+     * @return
+     */
     static boolean seInterseca(int p1x, int p1y, int q1x, int q1y, int p2x, int p2y, int q2x, int q2y)  
     { 
-        // Find the four orientations needed for  
-        // general and special cases 
+        // Haya las orientaciones necesarias para cada uno de los casos 
         int o1 = orientacion(p1x, p1y, q1x, q1y, p2x, p2y); 
         int o2 = orientacion(p1x, p1y, q1x, q1y, q2x, q2y); 
         int o3 = orientacion(p2x, p2y, q2x, q2y, p1x, p1y); 
         int o4 = orientacion(p2x, p2y, q2x, q2y, q1x, q1y); 
   
-        // General case 
+        // Caso general 
         if (o1 != o2 && o3 != o4) 
         { 
             return true; 
         } 
   
-        // Special Cases 
-        // p1, q1 and p2 are colinear and 
-        // p2 lies on segment p1q1 
+        // Casos especiales
+        // p1, q1 y p2 son colineales y  
+        // p2 esta en el segmento p1q1 
         if (o1 == 0 && estaEnLinea(p1x, p1y, p2x, p2y, q1x, q1y))  
         { 
             return true; 
         } 
   
-        // p1, q1 and p2 are colinear and 
-        // q2 lies on segment p1q1 
-        if (o2 == 0 && estaEnLinea(p1x, p1y, q2x, q2y, q1x, q1y))  
-        { 
-            return true; 
-        } 
-  
-        // p2, q2 and p1 are colinear and 
-        // p1 lies on segment p2q2 
+        // p2, q2 y p1 son colineales y 
+        // p1 esta en el segmento p2q2 
         if (o3 == 0 && estaEnLinea(p2x, p2y, p1x, p1y, q2x, q2y)) 
         { 
             return true; 
         } 
-  
-        // p2, q2 and q1 are colinear and 
-        // q1 lies on segment p2q2 
+
+        // p1, q1 y p2 son colineales y 
+        // q2 esta en el segmento p1q1 
+        if (o2 == 0 && estaEnLinea(p1x, p1y, q2x, q2y, q1x, q1y))  
+        { 
+            return true; 
+        } 
+        
+        // p2, q2 y q1 son colineales y  
+        // q1 esta en el segmento p2q2 
         if (o4 == 0 && estaEnLinea(p2x, p2y, q1x, q1y, q2x, q2y)) 
         { 
             return true; 
         } 
   
-        // Doesn't fall in any of the above cases 
+        // No esta en ninguno de los casos anteriores 
         return false;  
     } 
-  
-    // Returns true if the point p lies  
-    // inside the polygon[] with n vertices 
+   
+    /**
+     * Revisa si el punto esta adentro del poligono
+     * @param coordsx
+     * @param coordsy
+     * @param n
+     * @param px
+     * @param py
+     * @return
+     */
     static int estaAdentro(Integer coordsx[], Integer coordsy[], int n, int px, int py) 
     { 
-        // There must be at least 3 vertices in polygon[] 
+        // Deben haber al menos tres lados en el poligono
         if (n < 3)  
         { 
             return -1; 
         } 
   
-        // Create a point for line segment from p to infinite 
-        //Point extreme = new Point(INF, p.y); 
-  
-        // Count intersections of the above line  
-        // with sides of polygon 
+        // Cuenta las intersecciones de la linea desde el punto hasta infinito con los arcos
+        //del poligono
         int count = 0, i = 0; 
         do 
         { 
             int next = (i + 1) % n; 
   
-            // Check if the line segment from 'p' to  
-            // 'extreme' intersects with the line  
-            // segment from 'polygon[i]' to 'polygon[next]' 
-            if (seInterseca(coordsx[i],coordsy[i], coordsx[next],coordsy[next], px, py, INF, py))  
+            // Revisa si hay interseccion
+            if (seInterseca(coordsx[i],coordsy[i], coordsx[next],coordsy[next], px, py, MAXX, py))  
             { 
-                // If the point 'p' is colinear with line  
-                // segment 'i-next', then check if it lies  
-                // on segment. If it lies, return true, otherwise false 
+                // Revisa si el punto p es colinear y esta adentro del segmento
                 if (orientacion(coordsx[i],coordsy[i], px, py, coordsx[next],coordsy[next]) == 0) 
                 { 
                     boolean aux =estaEnLinea(coordsx[i],coordsy[i], px, py, coordsx[next],coordsy[next]); 
@@ -153,7 +160,7 @@ public class ProblemaC {
             i = next; 
         } while (i != 0); 
   
-        // Return true if count is odd, false otherwise 
+        // Verdadero si la cuenta es impar, si no es falso 
         boolean rta = count % 2 == 1; // Same as (count%2 == 1) 
         if(rta)
         {
